@@ -1,0 +1,35 @@
+.entete{
+  margin-bottom:5px;
+}
+.message{
+  padding:20px;
+  color:#fff;
+  line-height:25px;
+  max-width:90%;
+  display:inline-block;
+  text-align:left;
+  border-radius:5px;
+}
+.me{
+  text-align:right;
+}
+.you .message{
+  background-color:#58b666;
+}
+.me .message{
+  background-color:#6fbced;
+}
+.triangle{
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 10px 10px 10px;
+}
+.you .triangle{
+    border-color: transparent transparent #58b666 transparent;
+    margin-left:15px;
+}
+.me .triangle{
+    border-color: transparent transparent #6fbced transparent;
+    margin-left: 503px;
+}

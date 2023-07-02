@@ -1,0 +1,46 @@
+.boxVideo {
+    text-align: center;
+    width: 600px;
+    height: 300px;
+}
+.boxButton {
+    margin-top: -70px;
+}
+.boxButton span  {
+    margin-right: 10px;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    border-radius: 50%;
+    background-color: #cccccc91;
+    cursor: pointer;
+}
+.boxButton span svg {
+    color: #fff;
+    border-radius: 50%;
+    font-size: 20px;
+    margin: auto;
+}
+
+.boxButton span:hover {
+    background: #ff000082;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    border: 9px solid #fabdbb08;
+}
+
+.activeButton {
+    background: #ff000082 !important;
+    border-radius: 50% !important;
+    width: 60px !important;
+    height: 60px !important;
+    border: 9px solid #fabdbb08 !important;
+}
+.videoCall {
+    border-radius: 15px;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: fill;
+}
+

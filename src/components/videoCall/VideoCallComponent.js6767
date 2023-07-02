@@ -1,0 +1,61 @@
+"use client";
+
+import { useContext } from "react";
+// import {div, div, div} from '@material-ui/core';
+// import { SocketContext } from '../SocketContext';
+// import Loader from "../components/Loader";
+// import dial from '../assets/audio/dial.mp3';
+// import { VideoContext } from '@/context/VideoContext';
+import { SocketContext } from "@/context/SocketContext";
+// import audio2 from '../assets/audio/2.mp3';
+
+const VideoCallComponent = () => {
+
+  // const callAccepted  = useContext(VideoContext);
+  // console.log(me);
+
+    // const {me,callAccepted, userVideo, myVideo, callEnded, stream, call, videoInputs, changeVideoCamera, selectedVideoInput, myAudioRef} = useContext(VideoContext);
+    // const {socket} = useContext(SocketContext);
+    // console.log(Object.keys(me).length);
+    // console.log(me);
+    return ( <>dsdsdswdsd</>
+        // <div container spacing={2} className={callAccepted ? 'call-accepted d-flex align-items-center justify-content-center video-container p-0 p-md-5' : 'd-flex align-items-center justify-content-center video-container p-0 p-md-5'}>
+        //     <div item xs={12} md={callAccepted ? 12 : 6} className="rtl">
+        //         <label>انتخاب دوربین:</label>
+        //         <select className="form-control rtl mt-2" value={selectedVideoInput} onChange={(e)=>changeVideoCamera(e)}>
+        //             {videoInputs.map((inp,index)=>(
+        //                 <option key={index} value={inp.deviceId}>{inp.label}</option>    
+        //             ))}
+        //         </select>        
+        //     </div>    
+        //     {/* our own video */}
+        //     {stream &&(
+        //         <div item xs={12} md={6} className={!callAccepted ? 'me-div' : ''}>
+        //             <div className="video-div">
+        //                 <div varient="h5" gutterBottom className="text-center">
+        //                     {/* {`You(${me.fname} ${me.lname})`} */}
+        //                     {/* {me != null && Object.keys(me).length > 0 ? `You(${me.fname} ${me.lname})` : <Loader width="50" />} */}
+        //                 </div>
+        //                 <video controls playsInline muted ref={myVideo} autoPlay className="w-100" />
+        //                 <audio muted autoPlay loop ref={myAudioRef} className="d-none">
+        //                     {/* <source src={dial} type="audio/mpeg" /> */}
+        //                 </audio>
+        //             </div>
+        //         </div>    
+        //     )}
+        //     {/* user's video */}
+        //     {callAccepted && !callEnded && (
+        //         <div item xs={12} md={6}>
+        //             <div className="video-div">
+        //                 <div varient="h5" gutterBottom className="text-center">
+        //                 {call.from || call.to}
+        //                 </div>
+        //                 <video controls playsInline muted ref={userVideo} autoPlay className="w-100" />
+        //             </div>
+        //         </div>    
+        //     )}
+        // </div>
+    );
+}
+ 
+export default VideoCallComponent;
