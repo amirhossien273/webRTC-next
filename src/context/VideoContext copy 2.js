@@ -12,9 +12,9 @@ export const VideoCallContextProvider = ({children, user}) => {
 
     const [stream, setStream] = useState(null);
     const [peers, setPeers] = useState([]);
-    const [selectedVideoInput, setSelectedVideoInput] = useState(null);
+    const [selectedVideoInput, setSelectedVideoInput] = useState("");
     const {socket} = useContext(SocketContext);
-    const peersRef = useRef();
+    const peersRef = useRef([]);
     const connectionRef = useRef();
     const [videoInputs, setVideoInputs] = useState([]);
 
@@ -44,14 +44,13 @@ export const VideoCallContextProvider = ({children, user}) => {
               }
             });
             
-                  setVideoInputs(videoDevice);
-                // showVideo(true, true);
-                startStream(videoDevice[0].deviceId);
+
           })
 
+          console.log("ddddddddddddddddddddddddddddddddddddddddddd", videoDevice);
           // setVideoInputs(videoDevice);
-          // showVideo(true, true);
-          // startStream();
+
+          startStream();
 
           // console.log("socket emit in", socket.emit("join room", {roomID : "roomID", userId: "userId"}));
         //   })
@@ -63,12 +62,12 @@ export const VideoCallContextProvider = ({children, user}) => {
     }, [socket]);
 
     useEffect(() => {
-      if(selectedVideoInput !== null){ 
-        startStream(selectedVideoInput);
-      }
+      console.log("selectedVideoInput for devices",selectedVideoInput);
+      startStream(selectedVideoInput);
     }, [selectedVideoInput]);
   
     async function getDevices() {
+      let stream = null;
 
 
       return new Promise((resolve, reject) => {
@@ -90,17 +89,16 @@ export const VideoCallContextProvider = ({children, user}) => {
     })
     }
     
-    let prevTrack;
+
     function startStream (deviceId) {
-        if (stream) {
-          stream.getTracks().forEach((track) => {
-            console.log("track video :",track);
-            if (track.kind === "video") {
-              prevTrack = track;
-              track.stop();
-            }
-          });
-        }
+        // if (stream) {
+        //   stream.getTracks().forEach((track) => {
+        //     if (track.kind === "video") {
+        //       prevTrack = track;
+        //       track.stop();
+        //     }
+        //   });
+        // }
     
         let constraints = {
           audio: true,
@@ -114,56 +112,54 @@ export const VideoCallContextProvider = ({children, user}) => {
           .then( str => {
             // console.log("constraints LOG: ",str);
             
-            if (peersRef.current) {
-              // peersRef.current.destroy();
-              console.log("tr.getVideoTracks()[0]: ", str.getVideoTracks()[0]);
-              stream.removeTrack(stream.getVideoTracks()[0]);
-              stream.addTrack(str.getVideoTracks()[0]);
-              peersRef.current.replaceTrack(
-                prevTrack,
-                str.getVideoTracks()[0],
-                stream
-              );
-              userVideo.current.muted = false;
-            } else {
-              setStream(str);
-              userVideo.current.muted = true;
-            }
+            // if (connectionRef.current) {
+            //   stream.removeTrack(stream.getVideoTracks()[0]);
+            //   stream.addTrack(str.getVideoTracks()[0]);
+            //   connectionRef.current.replaceTrack(
+            //     prevTrack,
+            //     str.getVideoTracks()[0],
+            //     stream
+            //   );
+            //   // myVideo.current.muted = false;
+            // } else {
+            //   setStream(str);
+            //   // myVideo.current.muted = true;
+            // }
             userVideo.current.srcObject  = str;
-            console.log("???????????????????????????????????????????????????");
-            console.log(str);
-            console.log("???????????????????????????????????????????????????");
+
             const roomID = "J5uGgH1DmZPZWLo0vOMi1234";
             console.log("show user in log", user);
             const userId = user;
+            console.log("socket emit in dsssssssssssssss", socket.emit("join room", {roomID : "roomID", userId: "userId"}));
             socket.emit("join room", {roomID, userId});
             socket.on("all users", users => {
                 console.log("all users show: ",users);
                 const peers = [];
                 users.forEach(user => {
-                  console.log("*******************************************");
-                  console.log(str);
-                  console.log("*******************************************");
-                    const peer = createPeer(user.socketId, socket.id, str);
-                    peersRef.current = peer;
+                    const peer = createPeer(user.socketId, socket.id, stream);
+                    peersRef.current.push({
+                        peerID: user.socketId,
+                        peer,
+                    })
                     peers.push(peer);
                 })
                 setPeers(peers);
             })
 
             socket.on("user joined", payload => {
-              console.log("+++++++++++++++++++++++++++++++++++++++++++++");
-              console.log(str);
-              console.log("++++++++++++++++++++++++++++++++++++++++++++++");
-                const peer = addPeer(payload.signal, payload.callerID, str);
-                peersRef.current = peer;
+                console.log(1);
+                const peer = addPeer(payload.signal, payload.callerID, stream);
+                peersRef.current.push({
+                    peerID: payload.callerID,
+                    peer,
+                })
 
                 setPeers(users => [...users, peer]);
             });
 
             socket.on("receiving returned signal", payload => {
-                const item = peersRef.current;
-                item.signal(payload.signal);
+                const item = peersRef.current.find(p => p.peerID === payload.id);
+                item.peer.signal(payload.signal);
             });
 
           })
@@ -213,15 +209,18 @@ export const VideoCallContextProvider = ({children, user}) => {
             socket.on("user joined", payload => {
                 console.log(1);
                 const peer = addPeer(payload.signal, payload.callerID, stream);
-                peersRef.current = peer;
+                peersRef.current.push({
+                    peerID: payload.callerID,
+                    peer,
+                })
 
                 setPeers(users => [...users, peer]);
             });
 
-            // socket.on("receiving returned signal", payload => {
-            //     const item = peersRef.current.find(p => p.peerID === payload.id);
-            //     item.peer.signal(payload.signal);
-            // });
+            socket.on("receiving returned signal", payload => {
+                const item = peersRef.current.find(p => p.peerID === payload.id);
+                item.peer.signal(payload.signal);
+            });
         });
     }
 
@@ -254,47 +253,10 @@ export const VideoCallContextProvider = ({children, user}) => {
 
         return peer;
     }
-    function handleCameraToggle() {
-      setCameraStatus(!stream.getVideoTracks()[0].enabled);
-      stream.getVideoTracks()[0].enabled = !stream.getVideoTracks()[0].enabled;
-    };
-
-    // +++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-    const callUser = (id) => {
-      setOpenCallDialog(true);
-      myAudioRef.current.muted = false;
-      const peer = new Peer({ initiator: true, trickle: false, stream });
-      peer.on("signal", (data) => {
-        socket.emit("callRequest", {
-          otherParty: {
-            clientId: id,
-          },
-          from: `${me.fname} ${me.lname}`,
-          signalData: data,
-        });
-      });
-  
-      peer.on("stream", (currentStream) => {
-        userVideo.current.srcObject = currentStream;
-        userVideo.current.muted = false;
-      });
-      socket.on("callAccepted", (signal) => {
-        myAudioRef.current.muted = true;
-        setCallAccepted(true);
-        setOpenCallDialog(false);
-        setCallEnded(false);
-        setShowUsersList(false);
-        peer.signal(signal);
-      });
-  
-      connectionRef.current = peer;
-      console.log(connectionRef.current);
-    };
 
     
 
 
 
-    return <VideoCallContext.Provider value={{userVideo, changeVideoCamera, selectedVideoInput, videoInputs, peers, handleCameraToggle}}>{children}</VideoCallContext.Provider>
+    return <VideoCallContext.Provider value={{userVideo, changeVideoCamera, selectedVideoInput, videoInputs, peers}}>{children}</VideoCallContext.Provider>
 }

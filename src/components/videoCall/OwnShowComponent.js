@@ -22,7 +22,7 @@ const Video = (props) => {
 
   const { peers } = useContext(VideoCallContext);
 
-  console.log("peers js",peers);
+  console.log("peers jsqqqqqqqqqqqqqqqqqqzzzzzzzzzzz",peers);
 
   return (
     <div className={styles.boxVideo}>
